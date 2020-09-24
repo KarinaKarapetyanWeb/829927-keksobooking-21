@@ -19,7 +19,7 @@ const getRandomInRange = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const randomUniqueNumbersInRange = function (min, max, num) {
+const generateUniqueNumbersInRange = function (min, max, num) {
   let i;
   let array = [];
   let result = [];
@@ -47,7 +47,7 @@ const createRandomArrayFromArray = function (array) {
 const AdvertData = function (types, times, features, photos) {
   this.author = {
     // Не могу понять, как лучше сгенерировать неповторяющееся число на каждой итерации цикла, так как сама функция генерирует случайное число или массив с уникальными числами, но на каждой итерации - получаются повторения. Может быть заранее подготовить массив ADVERT_AVATARS?
-    'avatar': `img/avatars/user0${randomUniqueNumbersInRange(1, 8, 1)}.png`
+    'avatar': `img/avatars/user0${generateUniqueNumbersInRange(1, 8, 1)}.png`
   };
   this.offer = {
     'title': `заголовок предложения`,
