@@ -7,12 +7,16 @@ const ADVERT_PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `ht
 const ADVERTS_NUMBER = 8;
 const PIN_WIDTH = 50;
 const PIN_HEIGHT = 70;
+const MAP_WIDTH = 1200;
+const MAP_START_Y = 130;
+const MAP_END_Y = 630;
 const map = document.querySelector(`.map`);
 const mapPins = map.querySelector(`.map__pins`);
 const mapPinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const fragment = document.createDocumentFragment();
 const similarAdverts = [];
 const advertAvatars = [];
+
 
 let coordX;
 let coordY;
@@ -58,6 +62,8 @@ const createRandomArrayFromArray = function (array) {
 
 const createAdvertsArray = function (array, types, times, features, photos, arrayAvatar, arrayLength, coordinateX, coordinateY) {
   for (let i = 0; i < arrayLength; i++) {
+    coordinateX = getRandomInRange(0, MAP_WIDTH);
+    coordinateY = getRandomInRange(MAP_START_Y, MAP_END_Y);
     array[i] = {
       'author': {
         'avatar': arrayAvatar[i]
@@ -96,10 +102,6 @@ const renderAdvert = function (advert) {
 
   return advertElement;
 };
-
-
-coordX = getRandomInRange(0, 1200);
-coordY = getRandomInRange(130, 630);
 
 createUniqueAvatarArray(advertAvatars, ADVERTS_NUMBER);
 
