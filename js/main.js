@@ -12,6 +12,10 @@ const mapPins = map.querySelector(`.map__pins`);
 const mapPinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const fragment = document.createDocumentFragment();
 const similarAdverts = [];
+const advertAvatars = [];
+
+let coordX;
+let coordY;
 
 map.classList.remove(`map--faded`);
 
@@ -19,7 +23,7 @@ const getRandomInRange = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const generateUniqueNumbersInRange = function (min, max, num) {
+const getUniqueNumbersInRange = function (min, max, num) {
   let i;
   let array = [];
   let result = [];
@@ -36,6 +40,14 @@ const getRandomElementOfArray = function (array) {
   return array[getRandomInRange(0, array.length)];
 };
 
+const createUniqueAvatarArray = function (array, arrayLength) {
+  let test = getUniqueNumbersInRange(1, arrayLength, arrayLength);
+  for (let i = 0; i < arrayLength; i++) {
+    array.push(`img/avatars/user0${test[i]}.png`);
+  }
+  return array;
+};
+
 const createRandomArrayFromArray = function (array) {
   let features = [];
   for (let i = 0; i < getRandomInRange(1, array.length); i++) {
@@ -44,61 +56,32 @@ const createRandomArrayFromArray = function (array) {
   return features;
 };
 
-const AdvertData = function (types, times, features, photos) {
-  this.author = {
-    // Не могу понять, как лучше сгенерировать неповторяющееся число на каждой итерации цикла, так как сама функция генерирует случайное число или массив с уникальными числами, но на каждой итерации - получаются повторения. Может быть заранее подготовить массив ADVERT_AVATARS?
-    'avatar': `img/avatars/user0${generateUniqueNumbersInRange(1, 8, 1)}.png`
-  };
-  this.offer = {
-    'title': `заголовок предложения`,
-    // Еще вопрос - как сослаться на свойство этого же объекта и подставить его в строку? this.location.x - вызывает ошибку.
-    'address': `location.x, location.y`,
-    'price': getRandomInRange(10, 120),
-    'type': getRandomElementOfArray(types),
-    'rooms': getRandomInRange(1, 5),
-    'guests': getRandomInRange(1, 5),
-    'checkin': getRandomElementOfArray(times),
-    'checkout': getRandomElementOfArray(times),
-    'features': createRandomArrayFromArray(features),
-    'description': `описание`,
-    'photos': createRandomArrayFromArray(photos)
-  };
-  this.location = {
-    'x': getRandomInRange(0, 1200),
-    'y': getRandomInRange(130, 630)
-  };
-};
-
-const createAdvertsArray = function (array, types, times, features, photos) {
-  for (let i = 0; i < ADVERTS_NUMBER; i++) {
-    // стоит ли создавать объект на каждой итерации цикла с помощью функции-конструктора? или просто присваивать array[i] новый объект?
-    array[i] = new AdvertData(types, times, features, photos);
-    /* array[i] = {
+const createAdvertsArray = function (array, types, times, features, photos, arrayAvatar, arrayLength, coordinateX, coordinateY) {
+  for (let i = 0; i < arrayLength; i++) {
+    array[i] = {
       'author': {
-        'avatar': `img/avatars/user0${randomUniqueNumbersInRange(1, 8, 1)}.png`
+        'avatar': arrayAvatar[i]
       },
       'offer': {
         'title': `заголовок предложения`,
-        'address': `location.x, location.y`,
+        'address': `${coordinateX}, ${coordinateY}`,
         'price': getRandomInRange(10, 120),
-        'type': getRandomElementOfArray(ADVERT_TYPES),
+        'type': getRandomElementOfArray(types),
         'rooms': getRandomInRange(1, 5),
         'guests': getRandomInRange(1, 5),
-        'checkin': getRandomElementOfArray(ADVERT_CHECK_TIMES),
-        'checkout': getRandomElementOfArray(ADVERT_CHECK_TIMES),
-        'features': createRandomArrayFromArray(ADVERT_FEATURES),
+        'checkin': getRandomElementOfArray(times),
+        'checkout': getRandomElementOfArray(times),
+        'features': createRandomArrayFromArray(features),
         'description': `описание`,
-        'photos': createRandomArrayFromArray(ADVERT_PHOTOS)
+        'photos': createRandomArrayFromArray(photos)
       },
       'location': {
-        'x': getRandomInRange(0, 1200),
-        'y': getRandomInRange(130, 630)
+        'x': coordinateX,
+        'y': coordinateY
       }
-    };*/
+    };
   }
 };
-
-createAdvertsArray(similarAdverts, ADVERT_TYPES, ADVERT_CHECK_TIMES, ADVERT_FEATURES, ADVERT_PHOTOS);
 
 const renderAdvert = function (advert) {
   let advertElement = mapPinTemplate.cloneNode(true);
@@ -113,6 +96,14 @@ const renderAdvert = function (advert) {
 
   return advertElement;
 };
+
+
+coordX = getRandomInRange(0, 1200);
+coordY = getRandomInRange(130, 630);
+
+createUniqueAvatarArray(advertAvatars, ADVERTS_NUMBER);
+
+createAdvertsArray(similarAdverts, ADVERT_TYPES, ADVERT_CHECK_TIMES, ADVERT_FEATURES, ADVERT_PHOTOS, advertAvatars, ADVERTS_NUMBER, coordX, coordY);
 
 for (let i = 0; i < similarAdverts.length; i++) {
   fragment.appendChild(renderAdvert(similarAdverts[i]));
