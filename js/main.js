@@ -116,7 +116,7 @@ mapPins.appendChild(fragment);
 
 // Не получается передать method в параметр функции checkDataExists (например, чтобы можно было заменить метод innerHTML на другой)
 const checkDataExists = function (element, data, elementSelector, value) {
-  // Expected an assignment or function call and instead saw an expression - эта ошибка возникает, потому что функция должна что-то возравщать? Не совсем понимаю, что можно вовзращать в этой функции.
+  // Expected an assignment or function call and instead saw an expression - эта ошибка возникает, потому что функция должна что-то возвращать? Не совсем понимаю, что можно возвращать в этой функции.
   data ? element.querySelector(elementSelector).innerHTML = value : element.querySelector(elementSelector).style.display = `none`;
 };
 
