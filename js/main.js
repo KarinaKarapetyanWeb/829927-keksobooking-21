@@ -21,6 +21,7 @@ const advertAvatars = [];
 
 let coordX;
 let coordY;
+let elementType;
 
 map.classList.remove(`map--faded`);
 
@@ -30,8 +31,8 @@ const getRandomInRange = function (min, max) {
 
 const getUniqueNumbersInRange = function (min, max, num) {
   let i;
-  let array = [];
-  let result = [];
+  const array = [];
+  const result = [];
   for (i = min; i <= max; i++) {
     array.push(i);
   }
@@ -46,7 +47,7 @@ const getRandomElementOfArray = function (array) {
 };
 
 const createUniqueAvatarArray = function (array, arrayLength) {
-  let test = getUniqueNumbersInRange(1, arrayLength, arrayLength);
+  const test = getUniqueNumbersInRange(1, arrayLength, arrayLength);
   for (let i = 0; i < arrayLength; i++) {
     array.push(`img/avatars/user0${test[i]}.png`);
   }
@@ -54,7 +55,7 @@ const createUniqueAvatarArray = function (array, arrayLength) {
 };
 
 const createRandomArrayFromArray = function (array) {
-  let features = [];
+  const features = [];
   for (let i = 0; i < getRandomInRange(1, array.length); i++) {
     features[i] = array[i];
   }
@@ -114,32 +115,12 @@ for (let i = 0; i < similarAdverts.length; i++) {
 
 mapPins.appendChild(fragment);
 
-// Не получается передать method в параметр функции checkDataExists (например, чтобы можно было заменить метод innerHTML на другой)
-const checkDataExists = function (element, data, elementSelector, value) {
-  // Expected an assignment or function call and instead saw an expression - эта ошибка возникает, потому что функция должна что-то возвращать? Не совсем понимаю, что можно возвращать в этой функции.
-  data ? element.querySelector(elementSelector).innerHTML = value : element.querySelector(elementSelector).style.display = `none`;
+const hideElement = function (element) {
+  element.style.display = `none`;
 };
 
-const renderCard = function (advert) {
-  let cardPopupElement = cardPopupTemplate.cloneNode(true);
-
-  checkDataExists(cardPopupElement, advert.offer.title, `.popup__title`, advert.offer.title);
-  checkDataExists(cardPopupElement, advert.offer.address, `.popup__text--address`, advert.offer.address);
-  checkDataExists(cardPopupElement, advert.offer.price, `.popup__text--price`, `${advert.offer.price}₽/ночь`);
-  // Стоит, наверное, разделить проверки advert.offer.rooms && advert.offer.guests, advert.offer.checkin && advert.offer.checkout и предложение выводить по частям или так можно оставить?
-  checkDataExists(cardPopupElement, advert.offer.rooms && advert.offer.guests, `.popup__text--capacity`, `${advert.offer.rooms} комнаты для ${advert.offer.guests} гостей`);
-  checkDataExists(cardPopupElement, advert.offer.checkin && advert.offer.checkout, `.popup__text--time`, `Заезд после ${advert.offer.checkin}, выезд&nbsp;до ${advert.offer.checkout}`);
-  checkDataExists(cardPopupElement, advert.offer.features, `.popup__features`, advert.offer.features);
-  checkDataExists(cardPopupElement, advert.offer.description, `.popup__description`, advert.offer.description);
-
-  // Не получается передать method в параметр функции checkDataExists, чтобы можно было использовать эту функцию и для свойства src аватара, а не только innerHTML.
-  // Пока что advert.author.avatar оставила без проверки, прописать проверку без функции? Или можно реализовать передачу метода в аргумент?
-
-  cardPopupElement.querySelector(`.popup__avatar`).src = advert.author.avatar;
-
-  let elementType;
-
-  switch (advert.offer.type) {
+const getValueTypeOffer = function (data) {
+  switch (data) {
     case `palace`:
       elementType = `Дворец`;
       break;
@@ -152,22 +133,86 @@ const renderCard = function (advert) {
     case `bungalow`:
       elementType = `Бунгало`;
       break;
-    default:
-      elementType = ``;
   }
 
-  // Если типа жилья нет, оно все-равно вставляет значение 'квартира', хоть и скрывает .popup__type - хотя я прописала в default пустую строку.
+  return elementType;
+};
 
-  checkDataExists(cardPopupElement, advert.offer.type, `.popup__type`, elementType);
+const renderCard = function (advert) {
+  let cardPopupElement = cardPopupTemplate.cloneNode(true);
+  let cardTitle = cardPopupElement.querySelector(`.popup__title`);
+  let cardAddress = cardPopupElement.querySelector(`.popup__text--address`);
+  let cardPrice = cardPopupElement.querySelector(`.popup__text--price`);
+  let cardCapacity = cardPopupElement.querySelector(`.popup__text--capacity`);
+  let cardTime = cardPopupElement.querySelector(`.popup__text--time`);
+  let cardFeatures = cardPopupElement.querySelector(`.popup__features`);
+  let cardDescription = cardPopupElement.querySelector(`.popup__description`);
+  let cardAvatar = cardPopupElement.querySelector(`.popup__avatar`);
+  let cardType = cardPopupElement.querySelector(`.popup__type`);
+  let cardPhotos = cardPopupElement.querySelector(`.popup__photos`);
 
-  let elementPhotos = cardPopupElement.querySelector(`.popup__photos`);
+  getValueTypeOffer(advert.offer.type);
 
-  if (advert.offer.photos) {
-    for (let i = 0; i < advert.offer.photos.length; i++) {
-      elementPhotos.insertAdjacentHTML(`beforeend`, `<img src="${advert.offer.photos[i]}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`);
-    }
+  if (!advert.offer.title) {
+    hideElement(cardTitle);
   } else {
-    elementPhotos.style.display = `none`;
+    cardTitle.innerHTML = advert.offer.title;
+  }
+
+  if (!advert.offer.address) {
+    hideElement(cardAddress);
+  } else {
+    cardAddress.innerHTML = advert.offer.address;
+  }
+
+  if (!advert.offer.price) {
+    hideElement(cardPrice);
+  } else {
+    cardPrice.innerHTML = `${advert.offer.price}₽/ночь`;
+  }
+
+  if (!advert.offer.rooms || !advert.offer.guests) {
+    hideElement(cardCapacity);
+  } else {
+    cardCapacity.innerHTML = `${advert.offer.rooms} комнаты для ${advert.offer.guests} гостей`;
+  }
+
+  if (!advert.offer.checkin || !advert.offer.checkout) {
+    hideElement(cardTime);
+  } else {
+    cardTime.innerHTML = `Заезд после ${advert.offer.checkin}, выезд&nbsp;до ${advert.offer.checkout}`;
+  }
+
+  if (!advert.offer.features) {
+    hideElement(cardFeatures);
+  } else {
+    cardFeatures.innerHTML = advert.offer.features;
+  }
+
+  if (!advert.offer.description) {
+    hideElement(cardDescription);
+  } else {
+    cardDescription.innerHTML = advert.offer.description;
+  }
+
+  if (!advert.author.avatar) {
+    hideElement(cardAvatar);
+  } else {
+    cardAvatar.src = advert.author.avatar;
+  }
+
+  if (!advert.offer.type) {
+    hideElement(cardType);
+  } else {
+    cardType.innerHTML = elementType;
+  }
+
+  if (!advert.offer.photos) {
+    hideElement(cardPhotos);
+  } else {
+    for (let i = 0; i < advert.offer.photos.length; i++) {
+      cardPhotos.insertAdjacentHTML(`beforeend`, `<img src="${advert.offer.photos[i]}" class="popup__photo" width="45" height="40" alt="Фотография жилья">`);
+    }
   }
 
   return cardPopupElement;
