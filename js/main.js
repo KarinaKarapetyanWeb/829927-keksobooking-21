@@ -23,8 +23,6 @@ let coordX;
 let coordY;
 let elementType;
 
-map.classList.remove(`map--faded`);
-
 const getRandomInRange = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -219,3 +217,134 @@ const renderCard = function (advert) {
 };
 
 map.insertBefore(renderCard(similarAdverts[0]), mapFilterContainer);
+
+// активация страницы
+
+const MAIN_PIN_WIDTH = 65;
+const MAIN_PIN_HEIGHT = 85;
+const ENTER_KEY = `Enter`;
+const mainPin = document.querySelector(`.map__pin--main`);
+const adForm = document.querySelector(`.ad-form`);
+const mapFilters = document.querySelector(`.map__filters`);
+const adFormElements = Array.from(adForm.querySelectorAll(`.ad-form__element`));
+const mapFiltersElements = Array.from(mapFilters.children);
+const addressInput = adForm.querySelector(`#address`);
+const selectRoom = adForm.querySelector(`#room_number`);
+const selectGuests = adForm.querySelector(`#capacity`);
+const selectGuestsOptions = Array.from(selectGuests.options);
+const RoomsCapacity = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0]
+};
+
+const addDisabled = function (array) {
+  array.forEach(function (elem) {
+    elem.setAttribute(`disabled`, true);
+  });
+};
+
+const removeDisabled = function (array) {
+  array.forEach(function (elem) {
+    elem.removeAttribute(`disabled`);
+  });
+};
+
+
+const disableGuestsOptions = function (array) {
+  array.forEach(function (elem) {
+    if (!elem.selected) {
+      elem.disabled = `true`;
+    }
+  });
+};
+
+const activatePage = function () {
+  map.classList.remove(`map--faded`);
+  adForm.classList.remove(`ad-form--disabled`);
+  removeDisabled(adFormElements);
+  removeDisabled(mapFiltersElements);
+};
+
+const disableForms = function () {
+  addDisabled(adFormElements);
+  addDisabled(mapFiltersElements);
+};
+
+const setAdressToField = function () {
+  let positionX = mainPin.style.left.slice(0, -2);
+  let positionY = mainPin.style.top.slice(0, -2);
+  // Напиши, пожалуйста, я правильно рассчитала координаты?
+  let mainCoordX = (positionX - (MAIN_PIN_WIDTH / 2)).toFixed();
+  let mainCoordY = (positionY - MAIN_PIN_HEIGHT).toFixed();
+  addressInput.value = `${mainCoordX}, ${mainCoordY}`;
+};
+
+// Не совсем понимаю по заданию http://joxi.ru/v29197Ptpzqww2
+// Зачем еще раз вызывать эту функцию в обработчике mousedown, если поля должны быть заполнены сразу при открытии страницы
+
+disableForms();
+
+disableGuestsOptions(selectGuestsOptions);
+
+setAdressToField();
+
+mainPin.addEventListener(`mousedown`, function (evt) {
+  if (evt.button === 0) {
+    activatePage();
+  }
+});
+
+mainPin.addEventListener(`keydown`, function (evt) {
+  if (evt.key === ENTER_KEY) {
+    activatePage();
+  }
+});
+
+selectRoom.addEventListener(`input`, function () {
+
+  // блокируем все опции
+  addDisabled(selectGuestsOptions);
+
+  // разблокировка опций - для выбранной комнаты
+  RoomsCapacity[+selectRoom.value].forEach(function (item) {
+    let availableOption = selectGuests.querySelector(`option[value='${item}']`);
+    availableOption.removeAttribute(`disabled`);
+  });
+
+  // установка выбранного значения гостей для каждого варианта комнаты
+  if (selectRoom.value === `100`) {
+    selectGuests.querySelector(`option[value='0']`).selected = true;
+  } else {
+    selectGuests.querySelector(`option[value='${selectRoom.value}']`).selected = true;
+  }
+
+  // switch (+selectRoom.value) {
+  //   case 1:
+  //     removeDisabled(selectGuestsOptions);
+  //     selectGuestsOptions[1].disabled = true;
+  //     selectGuestsOptions[2].disabled = true;
+  //     selectGuestsOptions[3].disabled = true;
+  //     selectGuestsOptions[0].selected = true;
+  //     break;
+  //   case 2:
+  //     removeDisabled(selectGuestsOptions);
+  //     selectGuestsOptions[2].disabled = true;
+  //     selectGuestsOptions[3].disabled = true;
+  //     selectGuestsOptions[1].selected = true;
+  //     break;
+  //   case 3:
+  //     removeDisabled(selectGuestsOptions);
+  //     selectGuestsOptions[3].disabled = true;
+  //     selectGuestsOptions[2].selected = true;
+  //     break;
+  //   case 100:
+  //     removeDisabled(selectGuestsOptions);
+  //     selectGuestsOptions[0].disabled = true;
+  //     selectGuestsOptions[1].disabled = true;
+  //     selectGuestsOptions[2].disabled = true;
+  //     selectGuestsOptions[3].selected = true;
+  //     break;
+  // }
+});
