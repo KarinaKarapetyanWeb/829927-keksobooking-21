@@ -111,8 +111,6 @@ for (let i = 0; i < similarAdverts.length; i++) {
   fragment.appendChild(renderAdvert(similarAdverts[i]));
 }
 
-mapPins.appendChild(fragment);
-
 const hideElement = function (element) {
   element.style.display = `none`;
 };
@@ -216,13 +214,14 @@ const renderCard = function (advert) {
   return cardPopupElement;
 };
 
-map.insertBefore(renderCard(similarAdverts[0]), mapFilterContainer);
+// map.insertBefore(renderCard(similarAdverts[0]), mapFilterContainer);
 
 // активация страницы
 
 const MAIN_PIN_WIDTH = 65;
 const MAIN_PIN_HEIGHT = 85;
 const ENTER_KEY = `Enter`;
+const FIVESCORE_ROOMS = '100';
 const mainPin = document.querySelector(`.map__pin--main`);
 const adForm = document.querySelector(`.ad-form`);
 const mapFilters = document.querySelector(`.map__filters`);
@@ -265,6 +264,7 @@ const activatePage = function () {
   adForm.classList.remove(`ad-form--disabled`);
   removeDisabled(adFormElements);
   removeDisabled(mapFiltersElements);
+  mapPins.appendChild(fragment);
 };
 
 const disableForms = function () {
@@ -275,14 +275,28 @@ const disableForms = function () {
 const setAdressToField = function () {
   let positionX = mainPin.style.left.slice(0, -2);
   let positionY = mainPin.style.top.slice(0, -2);
-  // Напиши, пожалуйста, я правильно рассчитала координаты?
   let mainCoordX = (positionX - (MAIN_PIN_WIDTH / 2)).toFixed();
   let mainCoordY = (positionY - MAIN_PIN_HEIGHT).toFixed();
   addressInput.value = `${mainCoordX}, ${mainCoordY}`;
 };
 
-// Не совсем понимаю по заданию http://joxi.ru/v29197Ptpzqww2
-// Зачем еще раз вызывать эту функцию в обработчике mousedown, если поля должны быть заполнены сразу при открытии страницы
+const calculateRoomsAndCapacity = function () {
+  // блокируем все опции
+  addDisabled(selectGuestsOptions);
+
+  // разблокировка опций - для выбранной комнаты
+  RoomsCapacity[+selectRoom.value].forEach(function (item) {
+    let availableOption = selectGuests.querySelector(`option[value='${item}']`);
+    availableOption.removeAttribute(`disabled`);
+  });
+
+  // установка выбранного значения гостей для каждого варианта комнаты
+  if (selectRoom.value === FIVESCORE_ROOMS) {
+    selectGuests.querySelector(`option[value='${RoomsCapacity[+FIVESCORE_ROOMS]}']`).selected = true;
+  } else {
+    selectGuests.querySelector(`option[value='${selectRoom.value}']`).selected = true;
+  }
+};
 
 disableForms();
 
@@ -302,49 +316,4 @@ mainPin.addEventListener(`keydown`, function (evt) {
   }
 });
 
-selectRoom.addEventListener(`input`, function () {
-
-  // блокируем все опции
-  addDisabled(selectGuestsOptions);
-
-  // разблокировка опций - для выбранной комнаты
-  RoomsCapacity[+selectRoom.value].forEach(function (item) {
-    let availableOption = selectGuests.querySelector(`option[value='${item}']`);
-    availableOption.removeAttribute(`disabled`);
-  });
-
-  // установка выбранного значения гостей для каждого варианта комнаты
-  if (selectRoom.value === `100`) {
-    selectGuests.querySelector(`option[value='0']`).selected = true;
-  } else {
-    selectGuests.querySelector(`option[value='${selectRoom.value}']`).selected = true;
-  }
-
-  // switch (+selectRoom.value) {
-  //   case 1:
-  //     removeDisabled(selectGuestsOptions);
-  //     selectGuestsOptions[1].disabled = true;
-  //     selectGuestsOptions[2].disabled = true;
-  //     selectGuestsOptions[3].disabled = true;
-  //     selectGuestsOptions[0].selected = true;
-  //     break;
-  //   case 2:
-  //     removeDisabled(selectGuestsOptions);
-  //     selectGuestsOptions[2].disabled = true;
-  //     selectGuestsOptions[3].disabled = true;
-  //     selectGuestsOptions[1].selected = true;
-  //     break;
-  //   case 3:
-  //     removeDisabled(selectGuestsOptions);
-  //     selectGuestsOptions[3].disabled = true;
-  //     selectGuestsOptions[2].selected = true;
-  //     break;
-  //   case 100:
-  //     removeDisabled(selectGuestsOptions);
-  //     selectGuestsOptions[0].disabled = true;
-  //     selectGuestsOptions[1].disabled = true;
-  //     selectGuestsOptions[2].disabled = true;
-  //     selectGuestsOptions[3].selected = true;
-  //     break;
-  // }
-});
+selectRoom.addEventListener('input', calculateRoomsAndCapacity);
