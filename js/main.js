@@ -107,10 +107,6 @@ createUniqueAvatarArray(advertAvatars, ADVERTS_NUMBER);
 
 createAdvertsArray(similarAdverts, ADVERT_TYPES, ADVERT_CHECK_TIMES, ADVERT_FEATURES, ADVERT_PHOTOS, advertAvatars, ADVERTS_NUMBER, coordX, coordY);
 
-for (let i = 0; i < similarAdverts.length; i++) {
-  fragment.appendChild(renderAdvert(similarAdverts[i]));
-}
-
 // const hideElement = function (element) {
 //   element.style.display = `none`;
 // };
@@ -264,6 +260,9 @@ const activatePage = function () {
   adForm.classList.remove(`ad-form--disabled`);
   removeDisabled(adFormElements);
   removeDisabled(mapFiltersElements);
+  for (let i = 0; i < similarAdverts.length; i++) {
+    fragment.appendChild(renderAdvert(similarAdverts[i]));
+  }
   mapPins.appendChild(fragment);
 };
 
