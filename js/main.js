@@ -1,5 +1,7 @@
 'use strict';
 
+// создание массива данных и функции отрисовки пинов
+
 const ADVERT_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 const ADVERT_CHECK_TIMES = [`12:00`, `13:00`, `14:00`];
 const ADVERT_FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
@@ -107,7 +109,7 @@ createUniqueAvatarArray(advertAvatars, ADVERTS_NUMBER);
 
 createAdvertsArray(similarAdverts, ADVERT_TYPES, ADVERT_CHECK_TIMES, ADVERT_FEATURES, ADVERT_PHOTOS, advertAvatars, ADVERTS_NUMBER, coordX, coordY);
 
-// отрисовка карточки
+// функция отрисовки карточки
 
 const hideElement = function (element) {
   element.style.display = `none`;
@@ -212,14 +214,14 @@ const renderCard = function (advert) {
   return cardPopupElement;
 };
 
-// map.insertBefore(renderCard(similarAdverts[0]), mapFilterContainer);
-
 // активация страницы
 
 const MAIN_PIN_WIDTH = 65;
 const MAIN_PIN_HEIGHT = 85;
 const ENTER_KEY = `Enter`;
+const ESCAPE_KEY = `Escape`;
 const FIVESCORE_ROOMS = `100`;
+const AVATAR_ID_POSITION = -5;
 const mainPin = document.querySelector(`.map__pin--main`);
 const adForm = document.querySelector(`.ad-form`);
 const mapFilters = document.querySelector(`.map__filters`);
@@ -257,25 +259,94 @@ const disableGuestsOptions = function (array) {
   });
 };
 
+const enableActivatedPin = function () {
+  const activePin = mapPins.querySelector(`.map__pin--active`);
+  if (activePin) {
+    activePin.classList.remove(`map__pin--active`);
+  }
+};
+
+const activatePin = function (pin) {
+  pin.classList.add(`.map__pin--active`);
+};
+
+const closeCard = function () {
+  const openedCard = map.querySelector(`.map__card`);
+  if (openedCard) {
+    openedCard.parentElement.removeChild(openedCard);
+  }
+};
+
+const onPopupEscPress = function (evt) {
+  if (evt.key === ESCAPE_KEY) {
+    evt.preventDefault();
+    closeCard(map.querySelector(`.map__card`));
+  }
+};
+
+const onCloseButtonClick = function () {
+  const openedCard = map.querySelector(`.map__card`);
+  if (openedCard) {
+    const closePopup = openedCard.querySelector(`.popup__close`);
+    document.addEventListener(`keydown`, onPopupEscPress);
+    closePopup.addEventListener(`click`, function () {
+      closeCard();
+      document.removeEventListener(`keydown`, onPopupEscPress);
+    });
+  }
+};
+
+const getAvatarId = function (string) {
+  return string.substr(AVATAR_ID_POSITION, 1);
+};
+
+const searchAndRenderCard = function (array, source) {
+  array.forEach((item) => {
+    if (getAvatarId(item.author.avatar) === getAvatarId(source)) {
+      // удаляем открытую карточку
+      closeCard();
+      document.removeEventListener(`keydown`, onPopupEscPress);
+
+      // отрисовываем нужную
+      map.insertBefore(renderCard(item), mapFilterContainer);
+
+      onCloseButtonClick();
+    }
+  });
+};
+
+const checkPinAndCard = function (evt) {
+  let target = evt.target;
+  let imgSrc;
+
+  if (target.matches(`.map__pin`) && !target.matches(`.map__pin--main`)) {
+    imgSrc = target.querySelector(`img`).src;
+    activatePin(target);
+    searchAndRenderCard(similarAdverts, imgSrc);
+  } else if (target.matches(`.map__pin img`) && !target.parentElement.matches(`.map__pin--main`)) {
+    imgSrc = target.src;
+    activatePin(target.parentElement);
+    searchAndRenderCard(similarAdverts, imgSrc);
+  }
+
+  enableActivatedPin();
+};
+
 const activatePage = function () {
   map.classList.remove(`map--faded`);
   adForm.classList.remove(`ad-form--disabled`);
   removeDisabled(adFormElements);
   removeDisabled(mapFiltersElements);
+
+  // саму функцию рендера пинов надо тут оставить?
   for (let i = 0; i < similarAdverts.length; i++) {
     fragment.appendChild(renderAdvert(similarAdverts[i]));
   }
+  // или только вставку фрагмента?
   mapPins.appendChild(fragment);
 
-  // клики по пинам - показ карточки
-  const mapPinAll =  mapPins.querySelectorAll(`.map__pin`);
-
-  for (let i = 0; i < mapPinAll.length; i++) {
-    if (!mapPinAll[i].classList.contains(`map__pin--main`)) {
-      mapPinAll[i].addEventListener(`click`, function() {
-      });
-    }
-  }
+  // вызов этой функции лучше оставить тут или перенести в mainPin.addEventListener(`mousedown`)?
+  mapPins.addEventListener(`click`, checkPinAndCard);
 };
 
 const disableForms = function () {
@@ -289,24 +360,6 @@ const setAdressToField = function () {
   let mainCoordX = (positionX - (MAIN_PIN_WIDTH / 2)).toFixed();
   let mainCoordY = (positionY - MAIN_PIN_HEIGHT).toFixed();
   addressInput.value = `${mainCoordX}, ${mainCoordY}`;
-};
-
-const calculateRoomsAndCapacity = function () {
-  // блокируем все опции
-  addDisabled(selectGuestsOptions);
-
-  // разблокировка опций - для выбранной комнаты
-  RoomsCapacity[+selectRoom.value].forEach(function (item) {
-    let availableOption = selectGuests.querySelector(`option[value='${item}']`);
-    availableOption.removeAttribute(`disabled`);
-  });
-
-  // установка выбранного значения гостей для каждого варианта комнаты
-  if (selectRoom.value === FIVESCORE_ROOMS) {
-    selectGuests.querySelector(`option[value='${RoomsCapacity[+FIVESCORE_ROOMS]}']`).selected = true;
-  } else {
-    selectGuests.querySelector(`option[value='${selectRoom.value}']`).selected = true;
-  }
 };
 
 disableForms();
@@ -327,5 +380,20 @@ mainPin.addEventListener(`keydown`, function (evt) {
   }
 });
 
-selectRoom.addEventListener(`input`, calculateRoomsAndCapacity);
+// форма, валидация
+const calculateRoomsAndCapacity = function () {
+  addDisabled(selectGuestsOptions);
 
+  RoomsCapacity[+selectRoom.value].forEach(function (item) {
+    let availableOption = selectGuests.querySelector(`option[value='${item}']`);
+    availableOption.removeAttribute(`disabled`);
+  });
+
+  if (selectRoom.value === FIVESCORE_ROOMS) {
+    selectGuests.querySelector(`option[value='${RoomsCapacity[+FIVESCORE_ROOMS]}']`).selected = true;
+  } else {
+    selectGuests.querySelector(`option[value='${selectRoom.value}']`).selected = true;
+  }
+};
+
+selectRoom.addEventListener(`input`, calculateRoomsAndCapacity);
