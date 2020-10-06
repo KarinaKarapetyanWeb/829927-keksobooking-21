@@ -239,20 +239,20 @@ const RoomsCapacity = {
 };
 
 const addDisabled = function (array) {
-  array.forEach(function (elem) {
+  array.forEach((elem) => {
     elem.setAttribute(`disabled`, true);
   });
 };
 
 const removeDisabled = function (array) {
-  array.forEach(function (elem) {
+  array.forEach((elem) => {
     elem.removeAttribute(`disabled`);
   });
 };
 
 
 const disableGuestsOptions = function (array) {
-  array.forEach(function (elem) {
+  array.forEach((elem) => {
     if (!elem.selected) {
       elem.disabled = `true`;
     }
@@ -270,13 +270,6 @@ const activatePin = function (pin) {
   pin.classList.add(`.map__pin--active`);
 };
 
-const closeCard = function () {
-  const openedCard = map.querySelector(`.map__card`);
-  if (openedCard) {
-    openedCard.parentElement.removeChild(openedCard);
-  }
-};
-
 const onPopupEscPress = function (evt) {
   if (evt.key === ESCAPE_KEY) {
     evt.preventDefault();
@@ -284,14 +277,20 @@ const onPopupEscPress = function (evt) {
   }
 };
 
+const closeCard = function () {
+  const openedCard = map.querySelector(`.map__card`);
+  if (openedCard) {
+    openedCard.parentElement.removeChild(openedCard);
+  }
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
 const onCloseButtonClick = function () {
   const openedCard = map.querySelector(`.map__card`);
   if (openedCard) {
     const closePopup = openedCard.querySelector(`.popup__close`);
-    document.addEventListener(`keydown`, onPopupEscPress);
     closePopup.addEventListener(`click`, function () {
       closeCard();
-      document.removeEventListener(`keydown`, onPopupEscPress);
     });
   }
 };
@@ -303,20 +302,23 @@ const getAvatarId = function (string) {
 const searchAndRenderCard = function (array, source) {
   array.forEach((item) => {
     if (getAvatarId(item.author.avatar) === getAvatarId(source)) {
-      // удаляем открытую карточку
+      // удаляем открытую карточку и обработчик на документе
       closeCard();
-      document.removeEventListener(`keydown`, onPopupEscPress);
 
       // отрисовываем нужную
       map.insertBefore(renderCard(item), mapFilterContainer);
 
+      // добавляем обработчик на документе
+      document.addEventListener(`keydown`, onPopupEscPress);
+
+      // добавляем обработчик клика на крестик
       onCloseButtonClick();
     }
   });
 };
 
 const checkPinAndCard = function (evt) {
-  let target = evt.target;
+  const target = evt.target;
   let imgSrc;
 
   if (target.matches(`.map__pin`) && !target.matches(`.map__pin--main`)) {
@@ -338,15 +340,10 @@ const activatePage = function () {
   removeDisabled(adFormElements);
   removeDisabled(mapFiltersElements);
 
-  // саму функцию рендера пинов надо тут оставить?
   for (let i = 0; i < similarAdverts.length; i++) {
     fragment.appendChild(renderAdvert(similarAdverts[i]));
   }
-  // или только вставку фрагмента?
   mapPins.appendChild(fragment);
-
-  // вызов этой функции лучше оставить тут или перенести в mainPin.addEventListener(`mousedown`)?
-  mapPins.addEventListener(`click`, checkPinAndCard);
 };
 
 const disableForms = function () {
@@ -371,20 +368,23 @@ setAdressToField();
 mainPin.addEventListener(`mousedown`, function (evt) {
   if (evt.button === 0) {
     activatePage();
+    mapPins.addEventListener(`click`, checkPinAndCard);
   }
 });
 
 mainPin.addEventListener(`keydown`, function (evt) {
   if (evt.key === ENTER_KEY) {
     activatePage();
+    mapPins.addEventListener(`click`, checkPinAndCard);
   }
 });
 
 // форма, валидация
+
 const calculateRoomsAndCapacity = function () {
   addDisabled(selectGuestsOptions);
 
-  RoomsCapacity[+selectRoom.value].forEach(function (item) {
+  RoomsCapacity[+selectRoom.value].forEach((item) => {
     let availableOption = selectGuests.querySelector(`option[value='${item}']`);
     availableOption.removeAttribute(`disabled`);
   });
@@ -397,3 +397,55 @@ const calculateRoomsAndCapacity = function () {
 };
 
 selectRoom.addEventListener(`input`, calculateRoomsAndCapacity);
+
+const selectType = adForm.querySelector(`#type`);
+const inputPrice = adForm.querySelector(`#price`);
+const selectTimeIn = adForm.querySelector(`#timein`);
+const selectTimeOut = adForm.querySelector(`#timeout`);
+
+const OnSelectTimeCLick = function (evt) {
+  const target = evt.target;
+  let connectedSelect;
+
+  if (target === selectTimeIn) {
+    connectedSelect = selectTimeOut;
+  } else {
+    connectedSelect = selectTimeIn;
+  }
+
+  switch (target.value) {
+    case `12:00`:
+      connectedSelect.value = `12:00`;
+      break;
+    case `13:00`:
+      connectedSelect.value = `13:00`;
+      break;
+    case `14:00`:
+      connectedSelect.value = `14:00`;
+      break;
+  }
+};
+
+selectType.addEventListener(`change`, function () {
+  switch (selectType.value) {
+    case `bungalow`:
+      inputPrice.min = 0;
+      inputPrice.placeholder = `от 0`;
+      break;
+    case `flat`:
+      inputPrice.min = 1000;
+      inputPrice.placeholder = `от 1000`;
+      break;
+    case `house`:
+      inputPrice.min = 5000;
+      inputPrice.placeholder = `от 5000`;
+      break;
+    case `palace`:
+      inputPrice.min = 10000;
+      inputPrice.placeholder = `от 10000`;
+      break;
+  }
+});
+
+selectTimeIn.addEventListener(`change`, OnSelectTimeCLick);
+selectTimeOut.addEventListener(`change`, OnSelectTimeCLick);
