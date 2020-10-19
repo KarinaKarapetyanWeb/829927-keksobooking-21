@@ -10,10 +10,11 @@
     adForm: document.querySelector(`.ad-form`),
     map: document.querySelector(`.map`),
     mapPins: document.querySelector(`.map__pins`),
-    isEscEvent: function (evt, action, arg) {
+    activatedPage: false,
+    isEscEvent: function (evt, action) {
       if (evt.keyCode === ESC_KEYCODE) {
         evt.preventDefault();
-        action(arg);
+        action();
       }
     },
     isEnterEvent: function (evt, action) {

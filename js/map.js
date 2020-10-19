@@ -4,6 +4,7 @@
 
   const AVATAR_ID_POSITION = -5;
   const mapFilterContainer = window.util.map.querySelector(`.map__filters-container`);
+  let openedCard;
 
   const enableActivatedPin = function () {
     const activePin = window.util.mapPins.querySelector(`.map__pin--active`);
@@ -16,28 +17,31 @@
     pin.classList.add(`.map__pin--active`);
   };
 
+  const getOpenedCard = function () {
+    openedCard = window.util.map.querySelector(`.map__card`);
+    return openedCard;
+  };
+
   const closeCard = function () {
-    // переменная openedCard объявляется в каждой функции, наверное вынесу эту часть в еще одну функцию
-    const openedCard = window.util.map.querySelector(`.map__card`);
+    getOpenedCard();
     if (openedCard) {
       openedCard.parentElement.removeChild(openedCard);
     }
     document.removeEventListener(`keydown`, onPopupEscPress);
   };
 
-  const onPopupEscPress = function (evt) {
-    const openedCard = window.util.map.querySelector(`.map__card`);
-    window.util.isEscEvent(evt, closeCard, openedCard);
-  };
-
   const onCloseButtonClick = function () {
-    const openedCard = window.util.map.querySelector(`.map__card`);
+    getOpenedCard();
     if (openedCard) {
       const closePopup = openedCard.querySelector(`.popup__close`);
       closePopup.addEventListener(`click`, function () {
         closeCard();
       });
     }
+  };
+
+  const onPopupEscPress = function (evt) {
+    window.util.isEscEvent(evt, closeCard);
   };
 
   const getAvatarId = function (string) {
