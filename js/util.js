@@ -11,18 +11,24 @@
     map: document.querySelector(`.map`),
     mapPins: document.querySelector(`.map__pins`),
     activatedPage: false,
-    isEscEvent: function (evt, action) {
+    MapLimits: {
+      MAP_START_X: 200,
+      MAP_END_X: 1235,
+      MAP_START_Y: 130,
+      MAP_END_Y: 630
+    },
+    isEscEvent(evt, action) {
       if (evt.keyCode === ESC_KEYCODE) {
         evt.preventDefault();
         action();
       }
     },
-    isEnterEvent: function (evt, action) {
+    isEnterEvent(evt, action) {
       if (evt.keyCode === ENTER_KEYCODE) {
         action();
       }
     },
-    addDisabled: function (array) {
+    addDisabled(array) {
       array.forEach((elem) => {
         elem.setAttribute(`disabled`, true);
       });

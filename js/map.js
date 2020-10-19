@@ -83,7 +83,6 @@
     enableActivatedPin();
   };
 
-  // раньше эту функцию я вызывала внутри функции activatePage, как сделать лучше? можно оставить ее здесь и просто сразу вызвать?
   window.util.mapPins.addEventListener(`click`, checkPinAndCard);
 
 })();

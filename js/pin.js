@@ -21,7 +21,7 @@
   };
 
   window.advert = {
-    renderAdvert: renderAdvert
+    renderAdvert
   };
 
 })();

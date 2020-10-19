@@ -34,58 +34,57 @@
   disableForms();
 
   window.util.mainPin.addEventListener(`keydown`, function (evt) {
-    window.util.isEscEvent(evt, activatePage);
+    window.util.isEnterEvent(evt, activatePage);
   });
 
   // перетаскивание
 
-  window.util.mainPin.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
+  window.util.mainPin.addEventListener(`mousedown`, function (evt) {
 
-    let startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    if (evt.button === 0) {
 
-    const onMouseMove = function (moveEvt) {
-      moveEvt.preventDefault();
-
-      const shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+      let startCoords = {
+        x: evt.clientX,
+        y: evt.clientY
       };
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
+      const onMouseMove = function (moveEvt) {
+        moveEvt.preventDefault();
+
+        const shift = {
+          x: startCoords.x - moveEvt.clientX,
+          y: startCoords.y - moveEvt.clientY
+        };
+
+        startCoords = {
+          x: moveEvt.clientX,
+          y: moveEvt.clientY
+        };
+
+        if (moveEvt.clientX >= window.util.MapLimits.MAP_END_X || moveEvt.clientX <= window.util.MapLimits.MAP_START_X || moveEvt.clientY >= window.util.MapLimits.MAP_END_Y || moveEvt.clientY <= window.util.MapLimits.MAP_START_Y) {
+          return;
+        }
+
+        window.util.mainPin.style.top = (window.util.mainPin.offsetTop - shift.y) + `px`;
+        window.util.mainPin.style.left = (window.util.mainPin.offsetLeft - shift.x) + `px`;
+
+        window.adress.setAdressToField();
+
       };
 
-      console.log(startCoords);
+      const onMouseUp = function () {
 
-      if (moveEvt.clientX >= 1235 || moveEvt.clientX <= 200 || moveEvt.clientY >= 630 || moveEvt.clientY <= 130) {
-        return;
-      };
-
-      window.util.mainPin.style.top = (window.util.mainPin.offsetTop - shift.y) + 'px';
-      window.util.mainPin.style.left = (window.util.mainPin.offsetLeft - shift.x) + 'px';
-
-      window.adress.setAdressToField();
-
-    };
-
-    var onMouseUp = function (upEvt) {
-
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-
-      if (evt.button === 0) {
+        document.removeEventListener(`mousemove`, onMouseMove);
+        document.removeEventListener(`mouseup`, onMouseUp);
         activatePage();
         window.adress.setAdressToField();
-      }
-    };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+      };
+
+      document.addEventListener(`mousemove`, onMouseMove);
+      document.addEventListener(`mouseup`, onMouseUp);
+
+    }
   });
 
 })();
