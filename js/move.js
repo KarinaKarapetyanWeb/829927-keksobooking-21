@@ -74,12 +74,8 @@
         y: evt.clientY
       };
 
-      let dragged = false;
-
       const onMouseMove = function (moveEvt) {
         moveEvt.preventDefault();
-
-        dragged = true;
 
         const shift = {
           x: startCoords.x - moveEvt.clientX,
