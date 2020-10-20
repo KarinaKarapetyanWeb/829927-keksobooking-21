@@ -3,6 +3,7 @@
 (function () {
 
   const MAIN_PIN_WIDTH = 65;
+  const MAIN_PIN_HEIGHT_NOT_ACTIVE = 65;
   const MAIN_PIN_HEIGHT = 85;
   const FIVESCORE_ROOMS = `100`;
   const selectType = window.util.adForm.querySelector(`#type`);
@@ -31,10 +32,16 @@
   disableGuestsOptions(selectGuestsOptions);
 
   const setAdressToField = function () {
-    let positionX = window.util.mainPin.style.left.slice(0, -2);
-    let positionY = window.util.mainPin.style.top.slice(0, -2);
-    let mainCoordX = (positionX - (MAIN_PIN_WIDTH / 2)).toFixed();
-    let mainCoordY = (positionY - MAIN_PIN_HEIGHT).toFixed();
+    let positionX = +window.util.mainPin.style.left.slice(0, -2);
+    let positionY = +window.util.mainPin.style.top.slice(0, -2);
+    let mainCoordX = (positionX + MAIN_PIN_WIDTH / 2).toFixed();
+    let mainCoordY;
+    if (window.util.activatedPage) {
+      mainCoordY = (positionY + MAIN_PIN_HEIGHT).toFixed();
+    } else {
+      mainCoordY = (positionY + MAIN_PIN_HEIGHT_NOT_ACTIVE / 2).toFixed();
+    }
+
     addressInput.value = `${mainCoordX}, ${mainCoordY}`;
   };
 
@@ -103,5 +110,9 @@
 
   selectTimeIn.addEventListener(`change`, OnSelectTimeCLick);
   selectTimeOut.addEventListener(`change`, OnSelectTimeCLick);
+
+  window.adress = {
+    setAdressToField
+  };
 
 })();

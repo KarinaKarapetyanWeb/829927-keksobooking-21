@@ -8,8 +8,6 @@
   const ADVERT_PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
   const ADVERTS_NUMBER = 8;
   const MAP_WIDTH = 1200;
-  const MAP_START_Y = 130;
-  const MAP_END_Y = 630;
   const advertAvatars = [];
   let coordX;
   let coordY;
@@ -54,7 +52,7 @@
   const createAdvertsArray = function (array, types, times, features, photos, arrayAvatar, arrayLength, coordinateX, coordinateY) {
     for (let i = 0; i < arrayLength; i++) {
       coordinateX = getRandomInRange(0, MAP_WIDTH);
-      coordinateY = getRandomInRange(MAP_START_Y, MAP_END_Y);
+      coordinateY = getRandomInRange(window.util.MapLimits.MAP_START_Y, window.util.MapLimits.MAP_END_Y);
       array[i] = {
         'author': {
           'avatar': arrayAvatar[i]
