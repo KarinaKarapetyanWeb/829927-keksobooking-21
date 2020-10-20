@@ -6,14 +6,11 @@
 
   window.util = {
     similarAdverts: [],
-    mainPin: document.querySelector(`.map__pin--main`),
     adForm: document.querySelector(`.ad-form`),
     map: document.querySelector(`.map`),
     mapPins: document.querySelector(`.map__pins`),
-    activatedPage: false,
     MapLimits: {
-      MAP_START_X: 200,
-      MAP_END_X: 1235,
+      MAP_END_X: 1200,
       MAP_START_Y: 130,
       MAP_END_Y: 630
     },
