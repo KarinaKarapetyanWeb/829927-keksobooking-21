@@ -5,10 +5,11 @@
   const ENTER_KEYCODE = 13;
 
   window.util = {
-    similarAdverts: [],
+    advertsData: [],
     adForm: document.querySelector(`.ad-form`),
     map: document.querySelector(`.map`),
     mapPins: document.querySelector(`.map__pins`),
+    activatedPage: false,
     MapLimits: {
       MAP_END_X: 1200,
       MAP_START_Y: 130,
