@@ -76,7 +76,9 @@
     if (!advert.offer.features) {
       hideElement(cardFeatures);
     } else {
-      cardFeatures.innerHTML = advert.offer.features;
+      cardFeatures.innerHTML = advert.offer.features.map((item) => {
+        return ` ${item}`;
+      });
     }
 
     if (!advert.offer.description) {
@@ -109,7 +111,7 @@
   };
 
   window.card = {
-    renderCard
+    render: renderCard
   };
 
 })();

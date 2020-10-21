@@ -55,7 +55,7 @@
         closeCard();
 
         // отрисовываем нужную
-        window.util.map.insertBefore(window.card.renderCard(item), mapFilterContainer);
+        window.util.map.insertBefore(window.card.render(item), mapFilterContainer);
 
         // добавляем обработчик на документе
         document.addEventListener(`keydown`, onPopupEscPress);
@@ -73,11 +73,11 @@
     if (target.matches(`.map__pin`) && !target.matches(`.map__pin--main`)) {
       imgSrc = target.querySelector(`img`).src;
       activatePin(target);
-      searchAndRenderCard(window.util.similarAdverts, imgSrc);
+      searchAndRenderCard(window.util.advertsData, imgSrc);
     } else if (target.matches(`.map__pin img`) && !target.parentElement.matches(`.map__pin--main`)) {
       imgSrc = target.src;
       activatePin(target.parentElement);
-      searchAndRenderCard(window.util.similarAdverts, imgSrc);
+      searchAndRenderCard(window.util.advertsData, imgSrc);
     }
 
     enableActivatedPin();
