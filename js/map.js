@@ -25,7 +25,7 @@
   const closeCard = function () {
     getOpenedCard();
     if (openedCard) {
-      openedCard.parentElement.removeChild(openedCard);
+      window.util.removeElem(openedCard);
     }
     document.removeEventListener(`keydown`, onPopupEscPress);
   };
@@ -84,5 +84,9 @@
   };
 
   window.util.mapPins.addEventListener(`click`, checkPinAndCard);
+
+  window.map = {
+    closeCard
+  };
 
 })();

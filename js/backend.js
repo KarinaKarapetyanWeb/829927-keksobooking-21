@@ -2,7 +2,7 @@
 
 (function () {
   const URL_LOAD = `https://21.javascript.pages.academy/keksobooking/data`;
-  // const URL_UPLOAD = `https://21.javascript.pages.academy/keksobooking`;
+  const URL_UPLOAD = `https://21.javascript.pages.academy/keksobooking`;
   const StatusCode = {
     OK: 200
   };
@@ -37,8 +37,15 @@
     xhr.send();
   };
 
+  const save = function (data, onLoad, onError) {
+    const xhr = getData(onLoad, onError);
+    xhr.open(`POST`, URL_UPLOAD);
+    xhr.send(data);
+  };
+
   window.backend = {
     load,
+    save
   };
 
 })();
