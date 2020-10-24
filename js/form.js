@@ -10,6 +10,10 @@
   const selectRoom = window.util.adForm.querySelector(`#room_number`);
   const selectGuests = window.util.adForm.querySelector(`#capacity`);
   const selectGuestsOptions = Array.from(selectGuests.options);
+  const successMessageTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
+  const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
+  const main = document.querySelector(`main`);
+  const resetBtn = window.util.adForm.querySelector(`.ad-form__reset`);
   const RoomsCapacity = {
     1: [1],
     2: [1, 2],
@@ -90,5 +94,70 @@
 
   selectTimeIn.addEventListener(`change`, OnSelectTimeCLick);
   selectTimeOut.addEventListener(`change`, OnSelectTimeCLick);
+
+  const showMessage = function (template) {
+    const message = template.cloneNode(true);
+    main.insertAdjacentElement(`beforeend`, message);
+  };
+
+  const getSuccessMessage = function () {
+    const success = main.querySelector(`.success`);
+    return success;
+  };
+
+  const getErrorMessage = function () {
+    const error = main.querySelector(`.error`);
+    return error;
+  };
+
+  const hideMessage = function (getEl) {
+    const el = getEl();
+    window.util.removeElem(el);
+  };
+
+  const onSuccessMessageClick = function () {
+    hideMessage(getSuccessMessage);
+  };
+
+  const onErrorMessageClick = function () {
+    hideMessage(getErrorMessage);
+  };
+
+  const onSuccessEscPress = function (evt) {
+    window.util.isEscEvent(evt, hideMessage, getSuccessMessage);
+    document.removeEventListener(`keydown`, onSuccessEscPress);
+  };
+
+  const onErrorEscPress = function (evt) {
+    window.util.isEscEvent(evt, hideMessage, getErrorMessage);
+    document.removeEventListener(`keydown`, onErrorEscPress);
+  };
+
+  const onLoadAction = function () {
+    showMessage(successMessageTemplate);
+    document.addEventListener(`keydown`, onSuccessEscPress);
+    getSuccessMessage().addEventListener(`click`, onSuccessMessageClick);
+    window.page.disable();
+    window.util.adForm.reset();
+  };
+
+  const onErrorAction = function () {
+    showMessage(errorMessageTemplate);
+    document.addEventListener(`keydown`, onErrorEscPress);
+    getErrorMessage().addEventListener(`click`, onErrorMessageClick);
+    const errorButton = getErrorMessage().querySelector(`#error__button`);
+    if (errorButton) {
+      errorButton.addEventListener(`click`, onErrorMessageClick);
+    }
+  };
+
+  window.util.adForm.addEventListener(`submit`, function (evt) {
+    window.backend.save(new FormData(window.util.adForm), onLoadAction, onErrorAction);
+    evt.preventDefault();
+  });
+
+  resetBtn.addEventListener(`click`, function () {
+    window.page.disable();
+  });
 
 })();
