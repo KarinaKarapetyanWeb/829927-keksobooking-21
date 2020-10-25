@@ -100,7 +100,6 @@
   avatarInput.addEventListener(`change`, function () {
     let value = avatarInput.value;
     avatarPreview.src = value;
-    console.log(value);
   });
 
   const showMessage = function (template) {

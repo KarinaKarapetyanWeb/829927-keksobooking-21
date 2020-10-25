@@ -16,7 +16,9 @@
     if (value !== `any`) {
       filteredAdverts = window.util.advertsData.filter((item) => {
         if (item.offer.type === value) {
-          return item;
+          return true;
+        } else {
+          return false;
         }
       });
     } else {
@@ -32,8 +34,6 @@
     }
 
     window.util.mapPins.appendChild(fragment);
-
-    console.log(filteredAdverts);
 
     return filteredAdverts;
   });

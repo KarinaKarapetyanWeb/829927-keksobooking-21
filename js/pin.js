@@ -19,6 +19,8 @@
       advertElementImg.alt = advert.offer.title;
 
       return advertElement;
+    } else {
+      return false;
     }
   };
 
