@@ -6,10 +6,12 @@
 
   window.util = {
     advertsData: [],
+    SIMILAR_ADVERTS_COUNT: 5,
     adForm: document.querySelector(`.ad-form`),
     map: document.querySelector(`.map`),
     mapPins: document.querySelector(`.map__pins`),
     mainPin: document.querySelector(`.map__pin--main`),
+    mapFilters: document.querySelector(`.map__filters`),
     activatedPage: false,
     MapLimits: {
       MAP_END_X: 1200,
