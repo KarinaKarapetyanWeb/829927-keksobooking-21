@@ -33,6 +33,8 @@
 
     window.util.mapPins.appendChild(fragment);
 
+    console.log(filteredAdverts);
+
     return filteredAdverts;
   });
 

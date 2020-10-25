@@ -44,9 +44,11 @@
 
   const removeAllPins = function () {
     getRenderedPins();
-    renderedPins.forEach((pin) => {
-      window.util.mapPins.removeChild(pin);
-    });
+    if (renderedPins) {
+      renderedPins.forEach((pin) => {
+        window.util.mapPins.removeChild(pin);
+      });
+    }
   };
 
   const activatePage = function () {
