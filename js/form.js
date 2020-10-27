@@ -14,8 +14,9 @@
   const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
   const main = document.querySelector(`main`);
   const resetBtn = window.util.adForm.querySelector(`.ad-form__reset`);
-  const avatarInput = window.util.adForm.querySelector(`#avatar`);
-  const avatarPreview = window.util.adForm.querySelector(`.ad-form-header__preview img`);
+  // const avatarInput = window.util.adForm.querySelector(`#avatar`);
+  // const avatarPreview = window.util.adForm.querySelector(`.ad-form-header__preview img`);
+
   const RoomsCapacity = {
     1: [1],
     2: [1, 2],
@@ -96,11 +97,6 @@
 
   selectTimeIn.addEventListener(`change`, OnSelectTimeCLick);
   selectTimeOut.addEventListener(`change`, OnSelectTimeCLick);
-
-  avatarInput.addEventListener(`change`, function () {
-    let value = avatarInput.value;
-    avatarPreview.src = value;
-  });
 
   const showMessage = function (template) {
     const message = template.cloneNode(true);
