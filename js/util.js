@@ -6,6 +6,7 @@
 
   window.util = {
     advertsData: [],
+    checked: {},
     SIMILAR_ADVERTS_COUNT: 5,
     adForm: document.querySelector(`.ad-form`),
     map: document.querySelector(`.map`),

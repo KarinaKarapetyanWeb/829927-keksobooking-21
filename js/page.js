@@ -71,6 +71,7 @@
     window.drag.setAdressToField();
     window.map.closeCard();
     removeAllPins();
+    window.filter.updateFilter();
   };
 
   disableForms();
