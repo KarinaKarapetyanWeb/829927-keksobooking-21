@@ -2,7 +2,6 @@
 
 (function () {
 
-  const AVATAR_ID_POSITION = -5;
   const mapFilterContainer = window.util.map.querySelector(`.map__filters-container`);
   let openedCard;
 
@@ -44,13 +43,9 @@
     window.util.isEscEvent(evt, closeCard);
   };
 
-  const getAvatarId = function (string) {
-    return string.substr(AVATAR_ID_POSITION, 1);
-  };
-
-  const searchAndRenderCard = function (array, source) {
+  const searchAndRenderCard = function (array, description) {
     array.forEach((item) => {
-      if (getAvatarId(item.author.avatar) === getAvatarId(source)) {
+      if (item.offer.title === description) {
         // удаляем открытую карточку и обработчик на документе
         closeCard();
 
@@ -68,16 +63,16 @@
 
   const checkPinAndCard = function (evt) {
     const target = evt.target;
-    let imgSrc;
+    let title;
 
     if (target.matches(`.map__pin`) && !target.matches(`.map__pin--main`)) {
-      imgSrc = target.querySelector(`img`).src;
+      title = target.querySelector(`img`).alt;
       activatePin(target);
-      searchAndRenderCard(window.util.advertsData, imgSrc);
+      searchAndRenderCard(window.util.advertsData, title);
     } else if (target.matches(`.map__pin img`) && !target.parentElement.matches(`.map__pin--main`)) {
-      imgSrc = target.src;
+      title = target.alt;
       activatePin(target.parentElement);
-      searchAndRenderCard(window.util.advertsData, imgSrc);
+      searchAndRenderCard(window.util.advertsData, title);
     }
 
     enableActivatedPin();

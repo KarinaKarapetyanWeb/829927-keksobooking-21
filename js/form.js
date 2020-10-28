@@ -142,7 +142,7 @@
     getSuccessMessage().addEventListener(`click`, onSuccessMessageClick);
     window.page.disable();
     window.util.adForm.reset();
-    avatarPreview.src = `img/muffin-grey.svg`;
+    // avatarPreview.src = `img/muffin-grey.svg`;
   };
 
   const onErrorAction = function () {
@@ -162,7 +162,7 @@
 
   resetBtn.addEventListener(`click`, function () {
     window.page.disable();
-    avatarPreview.src = `img/muffin-grey.svg`;
+    // avatarPreview.src = `img/muffin-grey.svg`;
   });
 
 })();

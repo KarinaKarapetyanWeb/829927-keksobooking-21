@@ -80,20 +80,13 @@
     return value !== DEFAULT_VALUE ? value === item.toString() : true;
   };
 
-  updateFilter();
-
-  window.util.mapFilters.addEventListener(`change`, function (evt) {
+  const filterAdverts = function (evt) {
     const fragment = document.createDocumentFragment();
     window.map.closeCard();
     window.page.removeAllPins();
     getChecked(evt.target);
 
     filteredAdverts = window.util.advertsData.filter((item) => {
-
-      // let type = window.util.checked.type !== DEFAULT_VALUE ? window.util.checked.type === item.offer.type : true;
-      // let rooms = window.util.checked.rooms !== DEFAULT_VALUE ? +window.util.checked.rooms === item.offer.rooms : true;
-      // let guests = window.util.checked.guests !== DEFAULT_VALUE ? +window.util.checked.guests === item.offer.guests : true;
-
       let type = getBooleanValue(window.util.checked.type, item.offer.type);
       let rooms = getBooleanValue(window.util.checked.rooms, item.offer.rooms);
       let guests = getBooleanValue(window.util.checked.guests, item.offer.guests);
@@ -114,7 +107,11 @@
     window.util.mapPins.appendChild(fragment);
 
     return filteredAdverts;
-  });
+  };
+
+  updateFilter();
+
+  window.util.mapFilters.addEventListener(`change`, window.debounce(filterAdverts));
 
   window.filter = {
     updateFilter
