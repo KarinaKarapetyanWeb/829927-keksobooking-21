@@ -21,7 +21,7 @@
 
   let filteredAdverts = [];
 
-  const getChecked = function (target) {
+  const getChecked = (target) => {
     let name = target.name;
     let key;
     let selector;
@@ -42,45 +42,42 @@
     }
   };
 
-  const updateFilter = function () {
+  const updateFilter = () => {
     const houseType = window.util.mapFilters.querySelector(`#housing-type`);
     const houseRooms = window.util.mapFilters.querySelector(`#housing-rooms`);
     const houseGuests = window.util.mapFilters.querySelector(`#housing-guests`);
     const housePrice = window.util.mapFilters.querySelector(`#housing-price`);
-    const houseFeatures = Array.from(window.util.mapFilters.querySelectorAll(`.map__checkbox`));
+    const houseFeatures = window.util.mapFilters.querySelector(`.map__checkbox`);
 
     getChecked(houseType);
     getChecked(houseRooms);
     getChecked(houseGuests);
     getChecked(housePrice);
-    getChecked(houseFeatures[0]);
+    getChecked(houseFeatures);
   };
 
-  const checkPrice = function (it) {
+  const checkPrice = (it) => {
     return PriceRange[window.util.checked.price.toUpperCase()].MIN <= it && it <= PriceRange[window.util.checked.price.toUpperCase()].MAX;
   };
 
-  const getFeatures = function (it) {
-    let res;
+  const getFeatures = (it) => {
     if (it) {
       if (window.util.checked.features.length === 0) {
-        res = true;
+        return true;
       } else {
-        res = window.util.checked.features.every((el) => {
+        return window.util.checked.features.every((el) => {
           return it.includes(el);
         });
       }
-    } else {
-      res = false;
     }
-    return res;
+    return false;
   };
 
-  const getBooleanValue = function (value, item) {
+  const getBooleanValue = (value, item) => {
     return value !== DEFAULT_VALUE ? value === item.toString() : true;
   };
 
-  const filterAdverts = function (evt) {
+  const onFilterChange = function (evt) {
     const fragment = document.createDocumentFragment();
     window.map.closeCard();
     window.page.removeAllPins();
@@ -93,9 +90,7 @@
       let price = window.util.checked.price !== DEFAULT_VALUE ? checkPrice(item.offer.price) : true;
       let features = getFeatures(item.offer.features);
 
-      let result = (type && price && rooms && guests && features) ? true : false;
-
-      return result;
+      return !!(type && price && rooms && guests && features);
     });
 
     let number = filteredAdverts.length > window.util.SIMILAR_ADVERTS_COUNT ? window.util.SIMILAR_ADVERTS_COUNT : filteredAdverts.length;
@@ -111,10 +106,10 @@
 
   updateFilter();
 
-  window.util.mapFilters.addEventListener(`change`, window.debounce(filterAdverts));
+  window.util.mapFilters.addEventListener(`change`, window.debounce(onFilterChange));
 
   window.filter = {
-    updateFilter
+    update: updateFilter
   };
 
 })();

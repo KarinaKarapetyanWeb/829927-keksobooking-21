@@ -6,7 +6,7 @@
   const PIN_HEIGHT = 70;
   const mapPinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 
-  const renderAdvert = function (advert) {
+  const renderAdvert = (advert) => {
     if (advert.offer) {
       let advertElement = mapPinTemplate.cloneNode(true);
       let advertElementImg = advertElement.querySelector(`img`);
@@ -19,9 +19,8 @@
       advertElementImg.alt = advert.offer.title;
 
       return advertElement;
-    } else {
-      return false;
     }
+    return false;
   };
 
   window.advert = {

@@ -8,7 +8,7 @@
   };
   const TIMEOUT_IN_MS = 10000;
 
-  const getData = function (onLoad, onError) {
+  const getData = (onLoad, onError) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
     xhr.timeout = TIMEOUT_IN_MS;
@@ -31,13 +31,13 @@
     return xhr;
   };
 
-  const load = function (onLoad, onError) {
+  const load = (onLoad, onError) => {
     const xhr = getData(onLoad, onError);
     xhr.open(`GET`, URL_LOAD);
     xhr.send();
   };
 
-  const save = function (data, onLoad, onError) {
+  const save = (data, onLoad, onError) => {
     const xhr = getData(onLoad, onError);
     xhr.open(`POST`, URL_UPLOAD);
     xhr.send(data);

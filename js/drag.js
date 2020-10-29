@@ -12,7 +12,7 @@
   const MIN_COORD_Y = window.util.MapLimits.MAP_START_Y - MainPinParam.MAIN_PIN_HEIGHT;
   const MAX_COORD_Y = window.util.MapLimits.MAP_END_Y - MainPinParam.MAIN_PIN_HEIGHT;
 
-  const setAdressToField = function () {
+  const setAdressToField = () => {
     let positionX = +window.util.mainPin.style.left.slice(0, -2);
     let positionY = +window.util.mainPin.style.top.slice(0, -2);
     let mainCoordX = (positionX + MAIN_PIN_CENTER).toFixed();
@@ -77,7 +77,7 @@
 
       };
 
-      const onMouseUp = function () {
+      const onMouseUp = () => {
 
         if (!window.util.activatedPage) {
           window.page.activate();

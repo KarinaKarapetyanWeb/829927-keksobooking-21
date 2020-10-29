@@ -5,11 +5,11 @@
   const cardPopupTemplate = document.querySelector(`#card`).content.querySelector(`.popup`);
   let elementType;
 
-  const hideElement = function (element) {
+  const hideElement = (element) => {
     element.style.display = `none`;
   };
 
-  const getValueTypeOffer = function (data) {
+  const getValueTypeOffer = (data) => {
     switch (data) {
       case `palace`:
         elementType = `Дворец`;
@@ -28,7 +28,7 @@
     return elementType;
   };
 
-  const renderCard = function (advert) {
+  const renderCard = (advert) => {
     let cardPopupElement = cardPopupTemplate.cloneNode(true);
     let cardTitle = cardPopupElement.querySelector(`.popup__title`);
     let cardAddress = cardPopupElement.querySelector(`.popup__text--address`);

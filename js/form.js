@@ -14,8 +14,6 @@
   const errorMessageTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
   const main = document.querySelector(`main`);
   const resetBtn = window.util.adForm.querySelector(`.ad-form__reset`);
-  // const avatarInput = window.util.adForm.querySelector(`#avatar`);
-  // const avatarPreview = window.util.adForm.querySelector(`.ad-form-header__preview img`);
 
   const RoomsCapacity = {
     1: [1],
@@ -24,7 +22,7 @@
     100: [0]
   };
 
-  const disableGuestsOptions = function (array) {
+  const disableGuestsOptions = (array) => {
     array.forEach((elem) => {
       if (!elem.selected) {
         elem.disabled = `true`;
@@ -34,7 +32,7 @@
 
   disableGuestsOptions(selectGuestsOptions);
 
-  const calculateRoomsAndCapacity = function () {
+  const onSelectRoomInput = () => {
     window.util.addDisabled(selectGuestsOptions);
 
     RoomsCapacity[+selectRoom.value].forEach((item) => {
@@ -49,9 +47,9 @@
     }
   };
 
-  selectRoom.addEventListener(`input`, calculateRoomsAndCapacity);
+  selectRoom.addEventListener(`input`, onSelectRoomInput);
 
-  const OnSelectTimeCLick = function (evt) {
+  const OnSelectTimeChange = function (evt) {
     const target = evt.target;
     let connectedSelect;
 
@@ -74,7 +72,7 @@
     }
   };
 
-  selectType.addEventListener(`change`, function () {
+  selectType.addEventListener(`change`, () => {
     switch (selectType.value) {
       case `bungalow`:
         inputPrice.min = 0;
@@ -95,35 +93,37 @@
     }
   });
 
-  selectTimeIn.addEventListener(`change`, OnSelectTimeCLick);
-  selectTimeOut.addEventListener(`change`, OnSelectTimeCLick);
+  selectTimeIn.addEventListener(`change`, OnSelectTimeChange);
+  selectTimeOut.addEventListener(`change`, OnSelectTimeChange);
 
-  const showMessage = function (template) {
+  const showMessage = (template) => {
     const message = template.cloneNode(true);
     main.insertAdjacentElement(`beforeend`, message);
   };
 
-  const getSuccessMessage = function () {
+  const getSuccessMessage = () => {
     const success = main.querySelector(`.success`);
     return success;
   };
 
-  const getErrorMessage = function () {
+  const getErrorMessage = () => {
     const error = main.querySelector(`.error`);
     return error;
   };
 
-  const hideMessage = function (getEl) {
+  const hideMessage = (getEl) => {
     const el = getEl();
     window.util.removeElem(el);
   };
 
-  const onSuccessMessageClick = function () {
+  const onSuccessMessageClick = () => {
     hideMessage(getSuccessMessage);
+    document.removeEventListener(`keydown`, onSuccessEscPress);
   };
 
-  const onErrorMessageClick = function () {
+  const onErrorMessageClick = () => {
     hideMessage(getErrorMessage);
+    document.removeEventListener(`keydown`, onErrorEscPress);
   };
 
   const onSuccessEscPress = function (evt) {
@@ -136,16 +136,15 @@
     document.removeEventListener(`keydown`, onErrorEscPress);
   };
 
-  const onLoadAction = function () {
+  const onLoadAction = () => {
     showMessage(successMessageTemplate);
     document.addEventListener(`keydown`, onSuccessEscPress);
     getSuccessMessage().addEventListener(`click`, onSuccessMessageClick);
     window.page.disable();
     window.util.adForm.reset();
-    // avatarPreview.src = `img/muffin-grey.svg`;
   };
 
-  const onErrorAction = function () {
+  const onErrorAction = () => {
     showMessage(errorMessageTemplate);
     document.addEventListener(`keydown`, onErrorEscPress);
     getErrorMessage().addEventListener(`click`, onErrorMessageClick);
@@ -160,9 +159,8 @@
     evt.preventDefault();
   });
 
-  resetBtn.addEventListener(`click`, function () {
+  resetBtn.addEventListener(`click`, () => {
     window.page.disable();
-    // avatarPreview.src = `img/muffin-grey.svg`;
   });
 
 })();

@@ -5,23 +5,23 @@
   const mapFilterContainer = window.util.map.querySelector(`.map__filters-container`);
   let openedCard;
 
-  const enableActivatedPin = function () {
+  const enableActivatedPin = () => {
     const activePin = window.util.mapPins.querySelector(`.map__pin--active`);
     if (activePin) {
       activePin.classList.remove(`map__pin--active`);
     }
   };
 
-  const activatePin = function (pin) {
+  const activatePin = (pin) => {
     pin.classList.add(`.map__pin--active`);
   };
 
-  const getOpenedCard = function () {
+  const getOpenedCard = () => {
     openedCard = window.util.map.querySelector(`.map__card`);
     return openedCard;
   };
 
-  const closeCard = function () {
+  const closeCard = () => {
     getOpenedCard();
     if (openedCard) {
       window.util.removeElem(openedCard);
@@ -29,11 +29,11 @@
     document.removeEventListener(`keydown`, onPopupEscPress);
   };
 
-  const onCloseButtonClick = function () {
+  const onCloseButtonClick = () => {
     getOpenedCard();
     if (openedCard) {
       const closePopup = openedCard.querySelector(`.popup__close`);
-      closePopup.addEventListener(`click`, function () {
+      closePopup.addEventListener(`click`, () => {
         closeCard();
       });
     }
@@ -43,7 +43,7 @@
     window.util.isEscEvent(evt, closeCard);
   };
 
-  const searchAndRenderCard = function (array, description) {
+  const searchAndRenderCard = (array, description) => {
     array.forEach((item) => {
       if (item.offer.title === description) {
         // удаляем открытую карточку и обработчик на документе
@@ -61,7 +61,7 @@
     });
   };
 
-  const checkPinAndCard = function (evt) {
+  const onPinClick = function (evt) {
     const target = evt.target;
     let title;
 
@@ -78,7 +78,7 @@
     enableActivatedPin();
   };
 
-  window.util.mapPins.addEventListener(`click`, checkPinAndCard);
+  window.util.mapPins.addEventListener(`click`, onPinClick);
 
   window.map = {
     closeCard

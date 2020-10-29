@@ -8,7 +8,7 @@
   const mapFiltersElements = Array.from(window.util.mapFilters.children);
   let renderedPins = [];
 
-  const onLoadAction = function (adverts) {
+  const onLoadAction = (adverts) => {
     const fragment = document.createDocumentFragment();
 
     removeDisabled(mapFiltersElements);
@@ -19,30 +19,30 @@
     window.util.mapPins.appendChild(fragment);
   };
 
-  const onErrorAction = function (errorMessage) {
+  const onErrorAction = (errorMessage) => {
     const node = document.createElement(`div`);
     node.style = `position: absolute; z-index: 1; width: 400px; font-size: 30px; text-align: center; left: 50%; top: 200px; margin-left: -200px; padding: 30px; background-color: rgba(0, 0, 0, 0.7); color: #ffffff;`;
     node.textContent = errorMessage;
     document.body.insertAdjacentElement(`afterbegin`, node);
   };
 
-  const removeDisabled = function (array) {
+  const removeDisabled = (array) => {
     array.forEach((elem) => {
       elem.removeAttribute(`disabled`);
     });
   };
 
-  const disableForms = function () {
+  const disableForms = () => {
     window.util.addDisabled(adFormElements);
     window.util.addDisabled(mapFiltersElements);
   };
 
-  const getRenderedPins = function () {
+  const getRenderedPins = () => {
     renderedPins = window.util.mapPins.querySelectorAll(`.map__pin:not(.map__pin--main)`);
     return renderedPins;
   };
 
-  const removeAllPins = function () {
+  const removeAllPins = () => {
     getRenderedPins();
     if (renderedPins) {
       renderedPins.forEach((pin) => {
@@ -51,7 +51,7 @@
     }
   };
 
-  const activatePage = function () {
+  const activatePage = () => {
     window.util.activatedPage = true;
     window.util.map.classList.remove(`map--faded`);
     window.util.adForm.classList.remove(`ad-form--disabled`);
@@ -60,7 +60,7 @@
     window.backend.load(onLoadAction, onErrorAction);
   };
 
-  const disablePage = function () {
+  const disablePage = () => {
     window.util.activatedPage = false;
     window.util.mapFilters.reset();
     window.util.map.classList.add(`map--faded`);
@@ -71,7 +71,7 @@
     window.drag.setAdressToField();
     window.map.closeCard();
     removeAllPins();
-    window.filter.updateFilter();
+    window.filter.update();
   };
 
   disableForms();
