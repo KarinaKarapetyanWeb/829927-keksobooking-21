@@ -9,7 +9,7 @@ const housingChooser = window.util.adForm.querySelector(`#images`);
 const avatarPreview = window.util.adForm.querySelector(`.ad-form-header__preview img`);
 const housingPreview = window.util.adForm.querySelector(`.ad-form__photo`);
 
-const showPreview = function (evt) {
+const onChooserChange = function (evt) {
   const target = evt.target;
   const file = target.files[0];
   let fileName = file.name.toLowerCase();
@@ -50,8 +50,8 @@ const clearPreview = function () {
   }
 };
 
-avatarChooser.addEventListener(`change`, showPreview);
-housingChooser.addEventListener(`change`, showPreview);
+avatarChooser.addEventListener(`change`, onChooserChange);
+housingChooser.addEventListener(`change`, onChooserChange);
 
 window.photo = {
   clear: clearPreview
